@@ -169,9 +169,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+window.login = async function(){
 
-window.login = function(){
-  
     let email = document.getElementById("email").value.trim();
     let password = document.getElementById("password").value.trim();
 
@@ -188,30 +187,33 @@ window.login = function(){
       return;
     }
 
-    signInWithEmailAndPassword(auth, email, password)
-    .then(res=>{
+    try{
+        await signInWithEmailAndPassword(auth, email, password);
 
-        // ---- PLAY SOUND ----
+        // ---- PLAY TRING SOUND ----
         const tring = new Audio("assets/tring.mp3");
         tring.volume = 0.9;
-        tring.play();
+        await tring.play();
 
-        // delay voice cewek
-        setTimeout(()=>{
-            const welcome = new Audio("assets/welcome.mp3");
-            welcome.volume = 1;
+        // delay sebelum welcome
+        await new Promise(resolve => setTimeout(resolve, 450));
+
+        // ---- PLAY WELCOME SOUND ----
+        const welcome = new Audio("assets/welcome.mp3");
+        welcome.volume = 1;
+
+        // tunggu suara selesai
+        await new Promise(resolve => {
+            welcome.addEventListener("ended", resolve);
             welcome.play();
-        },450);
+        });
 
-        // redirect setelah suara
-        setTimeout(()=>{
-           window.location.href="tabungan";
-        },2200);
+        // redirect setelah suara selesai
+        window.location.href="tabungan";
 
-    })
-    .catch(err=>{
+    }catch(err){
         document.getElementById("topError").style.display="block";
-    })
+    }
 }
 </script>
 
