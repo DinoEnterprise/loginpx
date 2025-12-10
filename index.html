@@ -13,6 +13,8 @@
     box-sizing:border-box;
     font-family:'Outfit',sans-serif;
 }
+
+/* ====== BODY ANIMATION ====== */
 body{
     background:#f5f6fa;
     color:#111;
@@ -20,7 +22,14 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
+    opacity:0;
+    animation:bodyFade .6s ease forwards;
 }
+@keyframes bodyFade{
+    to{opacity:1;}
+}
+
+/* ====== BOX ====== */
 .login-box{
     width:100%;
     max-width:380px;
@@ -29,20 +38,37 @@ body{
     border-radius:20px;
     border:1px solid #eee;
     box-shadow:0 10px 35px rgba(0,0,0,.05);
+    transform:translateY(20px) scale(.98);
+    opacity:0;
+    animation:loginIn .7s .15s cubic-bezier(.25,.8,.25,1) forwards;
 }
+@keyframes loginIn{
+    to{
+        transform:translateY(0) scale(1);
+        opacity:1;
+    }
+}
+
+/* ====== TEXT ====== */
 h2{
     text-align:center;
     color:#111;
     margin-bottom:25px;
 }
+
 .logo{
     width:80px;
     display:block;
     margin:0 auto 20px auto;
+    opacity:0;
+    animation:fadeLogo .7s .35s ease forwards;
 }
-.input-field{
-    margin-bottom:10px;
+@keyframes fadeLogo{
+    to{opacity:1;}
 }
+
+.input-field{margin-bottom:10px;}
+
 input{
     width:100%;
     padding:13px;
@@ -50,6 +76,12 @@ input{
     border:1.3px solid #ddd;
     background:#fff;
     color:#111;
+    transition:.25s;
+}
+input:focus{
+    border-color:#4711EB;
+    box-shadow:0 0 0 2px rgba(71,17,235,.25);
+    outline:none;
 }
 button{
     width:100%;
@@ -62,7 +94,13 @@ button{
     cursor:pointer;
     margin-top:10px;
     font-weight:600;
+    transition:.25s;
 }
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 30px rgba(71,17,235,.25);
+}
+
 .top-error{
     font-size:14px;
     color:#ff2b2b;
@@ -90,7 +128,7 @@ label{
 
     <img src="https://i.imgur.com/ExJqq0w.png" class="logo">
 
-    <h2>Welcome to Saku.ID</h2>
+    <h2>Welcome to SAKU ID</h2>
 
     <div id="topError" class="top-error">
         The email or password is incorrect.
@@ -113,7 +151,6 @@ label{
 </div>
 
 
-<!-- FIREBASE AUTH -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -153,7 +190,24 @@ window.login = function(){
 
     signInWithEmailAndPassword(auth, email, password)
     .then(res=>{
-        window.location.href="tabungan"; 
+
+        // ---- PLAY SOUND ----
+        const tring = new Audio("assets/tring.mp3");
+        tring.volume = 0.9;
+        tring.play();
+
+        // delay voice cewek
+        setTimeout(()=>{
+            const welcome = new Audio("assets/welcome.mp3");
+            welcome.volume = 1;
+            welcome.play();
+        },450);
+
+        // redirect setelah suara
+        setTimeout(()=>{
+           window.location.href="tabungan";
+        },2200);
+
     })
     .catch(err=>{
         document.getElementById("topError").style.display="block";
